@@ -5,7 +5,7 @@ Scenario: brief description of this scenario
   * def Context = Java.type('eu.k5.greenfield.karate.Context');
   * def ctx = new Context()
 
-  * def createResourceStep = ctx.createStep("createResource").url( "http://localhost:8080/resource" ).request(  "{ \"value\": \"value\"}" )
+  * def createResourceStep = ctx.createStep("createResource").url( "http://localhost:8080/resource" ).request(  read("soapui-manual-createResourceStep.json"))
   * def getResourceStep = ctx.createStep("getResource").url("http://localhost:8080/resource/${#Project#projectProperty}")
   * def updateResourceStep = ctx.createStep("updateResource").url("http://localhost:8080/resource/${#Project#projectProperty}").request("{ \"id\":\"${#Project#projectProperty}\", \"value\": \"updated\" }")
 
@@ -15,8 +15,10 @@ Scenario: brief description of this scenario
   And header Content-Type = 'application/json'
   When method POST
   Then def temp = createResourceStep.response(response)
+  And status 200
+  And match createResourceStep.assertJsonExists("$.id") == true
 
-  * def t = ctx.transfer("createResource", "response", "$.id", "Project", "projectProperty", "")
+  * def t = ctx.transfer("#createResource#response", "$.id", "#Project#projectProperty", "")
 
   Given url getResourceStep.url()
   And header Accept = 'application/json'

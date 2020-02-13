@@ -29,10 +29,5 @@ when {
     }
 
 
-    data class Transfer(
-        val expression: String?,
-        val propertyName: String?,
-        val stepName: String?,
-        val language: String?
-    )
+
 }
