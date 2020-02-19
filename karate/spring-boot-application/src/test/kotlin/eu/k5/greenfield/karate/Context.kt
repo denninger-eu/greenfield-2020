@@ -5,9 +5,17 @@ import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.PathNotFoundException
 import com.sun.org.glassfish.external.amx.AMXUtil
+import sun.misc.IOUtils
+import java.io.InputStream
 import java.lang.StringBuilder
+import java.nio.charset.StandardCharsets
+import javax.script.ScriptEngineManager
 
 class Context {
+    private val scriptEngineManager: ScriptEngineManager by lazy { ScriptEngineManager() }
+    private val scriptEngine by lazy { scriptEngineManager.getEngineByName("groovy") }
+
+
     private val project = GenericContext(this)
     private val testSuite = GenericContext(this)
     private val testCase = GenericContext(this)
@@ -68,9 +76,15 @@ class Context {
         getContext(stepName)!!.setProperty(propertyName, value)
     }
 
-    private fun getContext(contextName: String?): GenericContext? {
+    fun getContext(contextName: String?): GenericContext? {
         if (contextName == "Project") {
             return project
+        }
+        if (contextName == "TestSuite") {
+            return testSuite
+        }
+        if (contextName == "TestCase") {
+            return testCase
         }
         return steps[contextName]
     }
@@ -140,6 +154,25 @@ class Context {
         return applyProperties(property.value)
     }
 
+    fun sleep(duration: Int) : String {
+        Thread.sleep(duration.toLong())
+        return ""
+    }
+
+    fun groovy(input: InputStream) {
+        val script = String(IOUtils.readFully(input, -1, true), StandardCharsets.UTF_8)
+
+        groovy(script)
+    }
+
+    fun groovy(script: String) {
+        scriptEngine.put("testRunner", TestRunner(this))
+        val result = scriptEngine.eval(script)
+
+        println(result)
+
+    }
+
     fun applyProperties(value: String?): String {
         if (value.isNullOrEmpty()) {
             return value ?: ""
@@ -203,6 +236,14 @@ open class GenericContext(
         return properties[propertyName]!!
     }
 
+    fun getOrCreateProperty(name: String): Property {
+        val property = getProperty("name")
+        if (property != null) {
+            return property
+        }
+        return createProperty(name)
+    }
+
     class Property(var value: String?)
 }
 
@@ -235,12 +276,12 @@ class StepContext(
     fun response(value: Any): StepContext {
         println(value)
         val responseString = ObjectMapper().writeValueAsString(value)
-        setProperty("response", responseString)
+        setProperty("Response", responseString)
         return this
     }
 
     fun response(): String {
-        return getExpanded("response") ?: ""
+        return getExpanded("Response") ?: ""
     }
 
     private val jsonResponse: DocumentContext by lazy { JsonPath.parse(response()) }
@@ -256,5 +297,47 @@ class StepContext(
         } catch (notFound: PathNotFoundException) {
             false
         }
+    }
+}
+
+
+class TestRunner(private val context: Context) {
+
+    val testCase = TestCase(context)
+}
+
+class TestCase(private val context: Context) {
+
+    private val ctx = context.getContext("TestCase")!!
+
+    val testSuite = TestSuite(context)
+
+    fun getPropertyValue(name: String): String? = ctx.getProperty(name)?.value
+
+    fun setPropertyValue(name: String, value: String) {
+        ctx.getOrCreateProperty(name).value = value
+    }
+
+}
+
+class TestSuite(private val context: Context) {
+    private val ctx = context.getContext("TestSuite")!!
+
+    val project = Project(context)
+
+    fun getPropertyValue(name: String): String? = ctx.getProperty(name)?.value
+
+    fun setPropertyValue(name: String, value: String) {
+        ctx.getOrCreateProperty(name).value = value
+    }
+}
+
+class Project(private val context: Context) {
+    private val ctx = context.getContext("Project")!!
+
+    fun getPropertyValue(name: String): String? = ctx.getProperty(name)?.value
+
+    fun setPropertyValue(name: String, value: String) {
+        ctx.getOrCreateProperty(name).value = value
     }
 }

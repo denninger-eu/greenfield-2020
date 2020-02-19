@@ -18,7 +18,7 @@ Scenario: brief description of this scenario
   And status 200
   And match createResourceStep.assertJsonExists("$.id") == true
 
-  * def t = ctx.transfer("#createResource#response", "$.id", "#Project#projectProperty", "")
+  * def t = ctx.transfer("#createResource#Response", "$.id", "#Project#projectProperty", "")
 
   Given url getResourceStep.url()
   And header Accept = 'application/json'
@@ -32,6 +32,8 @@ Scenario: brief description of this scenario
   And header Content-Type = 'application/json'
   When method PUT
   Then def temp = updateResourceStep.response(response)
+
+  * def t6 = ctx.groovy( read( "groovy.groovy" ) )
 
 
 

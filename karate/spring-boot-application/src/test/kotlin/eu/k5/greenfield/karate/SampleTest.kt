@@ -6,7 +6,9 @@ class SampleTest {
 
     @Karate.Test
     fun testManual(): Karate {
-        return Karate().feature("classpath:example/soapui-manual.feature")
+       // return Karate().feature("classpath:example/soapui-manual.feature")
+        return Karate().feature("classpath:example/exp.feature")
+
     }
 
 /*
