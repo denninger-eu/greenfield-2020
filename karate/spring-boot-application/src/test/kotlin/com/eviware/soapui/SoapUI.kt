@@ -4,7 +4,7 @@ import eu.k5.greenfield.karate.Context
 import eu.k5.greenfield.karate.PropertyHolder
 import org.slf4j.LoggerFactory
 
-class SoapUI {
+class SoapUIX {
 
     companion object {
         @JvmStatic

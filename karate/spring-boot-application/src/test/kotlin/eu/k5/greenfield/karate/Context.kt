@@ -27,13 +27,14 @@ class Context {
         return stepContext
     }
 
-    fun transfer(source: String, sourceExpression: String, target: String, targetExpression: String) {
+    fun transfer(source: String, sourceExpression: String, target: String, targetExpression: String): Any? {
         val s = Transfer(source, sourceExpression, "JSONPATH")
         val sourceValue = getSourceValue(s)
         val t = Transfer(target, targetExpression, "JSONPATH")
 
         println("target $t")
         updateTarget(t, sourceValue ?: "")
+        return null // return HashMap<String,String>()
     }
 
     fun transfer(
@@ -56,6 +57,10 @@ class Context {
         println("target $t")
         updateTarget(t, sourceValue ?: "")
 
+        return ""
+    }
+
+    fun setProperty(name: String, key: String, value: String): String? {
         return ""
     }
 
@@ -154,7 +159,7 @@ class Context {
         return applyProperties(property.value)
     }
 
-    fun sleep(duration: Int) : String {
+    fun sleep(duration: Int): String {
         Thread.sleep(duration.toLong())
         return ""
     }
@@ -272,6 +277,7 @@ class StepContext(
         setProperty("request", value)
         return this
     }
+
 
     fun response(value: Any): StepContext {
         println(value)
