@@ -14,30 +14,25 @@ import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
-import org.apache.poi.xwpf.usermodel.XWPFStyle;
 import org.apache.poi.xwpf.usermodel.XWPFStyles;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xwpf.usermodel.XWPFTableRow;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblGrid;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.impl.CTTblGridImpl;
 
 public class Main {
 	public static void main(String[] args) throws IOException {
 		// Blank Document
 		InputStream fileReader = new FileInputStream(new File("empty.docx"));
-		//XWPFDocument document = new XWPFDocument(fileReader);
+		// XWPFDocument document = new XWPFDocument(fileReader);
 		XWPFDocument emptyDocument = new XWPFDocument(fileReader);
 
-		XWPFStyles styles = emptyDocument.getStyles();
-		
-		XWPFDocument document = new XWPFDocument();
-		XWPFStyles newStyles = document.createStyles();
-		
-		XWPFStyle style = styles.getStyle("Normal");
-		newStyles.setSpellingLanguage("English");
+		XWPFDocument document = emptyDocument;
 
-		newStyles.addStyle(style);
-		
-		
 		title(document);
-
+		table(document);
 		convert(document);
 
 		// Write the Document in file system
@@ -61,6 +56,17 @@ public class Main {
 		titleRun.setBold(true);
 		titleRun.setFontFamily("Courier");
 		titleRun.setFontSize(20);
+	}
+
+	private static void table(XWPFDocument document) {
+		// create table
+		XWPFTable table = document.createTable();
+
+		table.getCTTbl().setTblGrid(new CTTblGridImpl(table.getCTTbl().schemaType()));
+		CTRow row = table.getCTTbl().addNewTr();
+		CTTc col = row.addNewTc();
+		
+		
 	}
 
 	private static void convert(XWPFDocument document) throws XWPFConverterException, IOException {

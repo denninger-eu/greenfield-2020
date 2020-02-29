@@ -4,14 +4,15 @@ import com.intuit.karate.junit5.Karate
 
 class SampleTest {
 
-    //@Karate.Test
+    @Karate.Test
     fun testManual(): Karate {
-        return Karate().feature("classpath:example/soapui-manual.feature")
+      //  return Karate().feature("classpath:example/soapui-manual.feature")
       //  return Karate().feature("classpath:example/exp.feature")
+        return Karate().feature("classpath:example/t2/main.feature")
 
     }
 
-    @Karate.Test
+  //  @Karate.Test
     fun testManualWithDread(): Karate {
         return Karate().feature("classpath:example/soapui-manual-withdread.feature")
         //  return Karate().feature("classpath:example/exp.feature")

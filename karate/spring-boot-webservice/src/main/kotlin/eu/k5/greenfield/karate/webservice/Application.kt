@@ -1,4 +1,4 @@
-package eu.k5.greenfield.karate
+package eu.k5.greenfield.karate.webservice
 
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.SpringApplication
@@ -15,8 +15,7 @@ fun main(args: Array<String>) {
 @SpringBootApplication
 open class Application {
 
-    
-    
+
     @Bean
     open fun commandLineRunner(ctx: ApplicationContext): CommandLineRunner {
         return CommandLineRunner {
