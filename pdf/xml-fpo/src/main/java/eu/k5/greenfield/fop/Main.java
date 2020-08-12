@@ -1,5 +1,11 @@
 package eu.k5.greenfield.fop;
 
-public class Main {
+import java.util.function.Predicate;
 
+public class Main {
+	public static void main(String[] args) {
+
+		Predicate<String> x = ""::equals;
+
+	}
 }

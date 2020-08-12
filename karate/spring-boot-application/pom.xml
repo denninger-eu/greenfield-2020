@@ -136,7 +136,6 @@
             <artifactId>karate-apache</artifactId>
             <version>${karate.version}</version>
             <scope>test</scope>
-
         </dependency>
 
         <dependency>

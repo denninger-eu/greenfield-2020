@@ -47,7 +47,8 @@ open class HelloController {
 
 data class Res(
     var id: String? = null,
-    var value: String? = null
+    var value: String? = null,
+    var age: String? = null
 ) {
     constructor() : this(null, null)
 }
